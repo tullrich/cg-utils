@@ -8,7 +8,7 @@ _TEST_SOURCES := $(wildcard test/*.cpp)
 _TEST_OBJECTS := $(patsubst %.cpp,%.o,$(_TEST_SOURCES))
 
 IDIR = src/
-CPPFLAGS=-g -std=gnu++0x -I$(IDIR) 
+CPPFLAGS=-g -std=c++0x -I$(IDIR) 
 
 BUILD_DIR := bin/
 PROGRAM_NAME := cgutils

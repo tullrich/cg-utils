@@ -1,6 +1,11 @@
 #ifndef _VECTOR_H
 #define _VECTOR_H
 
+#include "swizzle.hpp"
+
+namespace cgutils
+{
+
 class Vector
 {
 public:
@@ -21,4 +26,6 @@ public:
 	float& operator[] (int x);
 };
 
-#endif // _VECTOR_H
+} /* namespace cgutils */
+
+#endif /* _VECTOR_H */

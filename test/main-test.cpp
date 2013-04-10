@@ -2,6 +2,8 @@
 #include "vector.h"
 #include <stdexcept>
 
+using namespace cgutils;
+
 class VectorTest : public ::testing::Test
 {
 protected:
@@ -129,6 +131,14 @@ TEST_F(VectorTest, crossproduct)
 }
 
 TEST_F(VectorTest, magnitude) 
+{
+	Vector temp(0.26726124191, 0.53452248382, 0.80178372573);
+	float result = temp.magnitude();
+
+	EXPECT_EQ(1.0, result);
+}
+
+TEST_F(VectorTest, swizzle_xy) 
 {
 	Vector temp(0.26726124191, 0.53452248382, 0.80178372573);
 	float result = temp.magnitude();

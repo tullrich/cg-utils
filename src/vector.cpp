@@ -3,6 +3,10 @@
 #include <stdexcept>
 #include <cmath>
 
+namespace cgutils
+{
+
+
 Vector::Vector() : x(0.0), y(0.0), z(0.0)
 {
 }
@@ -94,4 +98,5 @@ float& Vector::operator[](int index)
 
 	throw std::out_of_range ("bad index " + index);
 }
- 
+
+} /* namespace cgutils */
