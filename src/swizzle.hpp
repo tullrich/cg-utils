@@ -99,9 +99,6 @@ protected:
 	template <typename T>
 	void _apply_op(const VecType& that, T op)
 	{
-		// Make a copy of the data in this == &that.
-		// The copier should optimize out the copy in cases where the function is
-		// properly inlined and the copy is not necessary.
 		ValueType t[N];
 		for (int i = 0; i < N; ++i)
 			t[i] = that[i];
@@ -120,7 +117,15 @@ struct swizzle : public _swizzle_base2<ValueType,VecType,N,E0,E1,E2,E3,(E0==E1||
 	operator VecType () const { return (*this)(); }
 };
 
-
+#define _GLM_SWIZZLE3_3_MEMBERS(T,P,E0,E1,E2) \
+	struct { swizzle<3,T,P,0,0,0,-1> E0 ## E0 ## E0; }; \
+	struct { swizzle<3,T,P,0,0,1,-1> E0 ## E0 ## E1; }; \
+	struct { swizzle<3,T,P,0,0,2,-1> E0 ## E0 ## E2; }; \
+	struct { swizzle<3,T,P,0,1,0,-1> E0 ## E1 ## E0; }; \
+	struct { swizzle<3,T,P,0,1,1,-1> E0 ## E1 ## E1; }; \
+	struct { swizzle<3,T,P,0,1,2,-1> E0 ## E1 ## E2; }; \
+	struct { swizzle<3,T,P,0,2,0,-1> E0 ## E2 ## E0; }; \
+	struct { swizzle<3,T,P,0,2,1,-1> E0 ## E2 ## E1; }; \
 
 } /* namespace cgutils */
 #endif /* _SWIZZLE_H */

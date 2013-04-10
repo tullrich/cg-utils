@@ -9,7 +9,11 @@ namespace cgutils
 class Vector
 {
 public:
-	float x, y, z;
+	union
+	{
+		struct {float x, y, z;};
+		_GLM_SWIZZLE3_3_MEMBERS(float, Vector, x, y, z)
+	};
 
 	Vector();
 	Vector(float x, float y, float z);

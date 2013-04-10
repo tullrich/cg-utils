@@ -36,6 +36,10 @@ protected:
 	Vector v1, v2;
 };
 
+TEST_F(VectorTest, size) 
+{
+	EXPECT_EQ(12, sizeof(v1));
+}
 
 TEST_F(VectorTest, defaultconstructor) 
 {
@@ -140,8 +144,9 @@ TEST_F(VectorTest, magnitude)
 
 TEST_F(VectorTest, swizzle_xy) 
 {
-	Vector temp(0.26726124191, 0.53452248382, 0.80178372573);
-	float result = temp.magnitude();
+	Vector result = v1.xxz;
 
-	EXPECT_EQ(1.0, result);
+	EXPECT_EQ(1.0, result.x);
+	EXPECT_EQ(1.0, result.y);
+	EXPECT_EQ(3.0, result.z);
 }
