@@ -12,10 +12,13 @@ public:
 	union
 	{
 		struct {float x, y, z;};
-		_GLM_SWIZZLE3_3_MEMBERS(float, Vector, x, y, z)
+		_SWIZZLE3_2_MEMBERS(float, Vector, x, y, z)
+		_SWIZZLE3_3_MEMBERS(float, Vector, x, y, z)
 	};
 
 	Vector();
+	Vector(float x);
+	Vector(float x, float y);
 	Vector(float x, float y, float z);
 
 	Vector operator+(const Vector v);

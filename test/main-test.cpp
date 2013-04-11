@@ -144,9 +144,38 @@ TEST_F(VectorTest, magnitude)
 
 TEST_F(VectorTest, swizzle_xy) 
 {
-	Vector result = v1.xxz;
+	Vector result = v1.xyz;
 
 	EXPECT_EQ(1.0, result.x);
-	EXPECT_EQ(1.0, result.y);
+	EXPECT_EQ(2.0, result.y);
 	EXPECT_EQ(3.0, result.z);
+}
+
+TEST_F(VectorTest, swizzle_zzz) 
+{
+	Vector result = v1.zzz;
+
+	EXPECT_EQ(3.0, result.x);
+	EXPECT_EQ(3.0, result.y);
+	EXPECT_EQ(3.0, result.z);
+}
+
+TEST_F(VectorTest, swizzle_yy) 
+{
+	Vector result;
+	result = v1.yy;
+
+	EXPECT_EQ(2.0, result.x);
+	EXPECT_EQ(2.0, result.y);
+	EXPECT_EQ(0.0, result.z);
+}
+
+TEST_F(VectorTest, swizzle_addition) 
+{
+	Vector result;
+	result = v1.yy + v2.zz;
+
+	EXPECT_EQ(7.0, result.x);
+	EXPECT_EQ(7.0, result.y);
+	EXPECT_EQ(0.0, result.z);
 }

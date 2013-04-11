@@ -7,13 +7,13 @@ namespace cgutils
 {
 
 
-Vector::Vector() : x(0.0), y(0.0), z(0.0)
-{
-}
+Vector::Vector() : x(0.0), y(0.0), z(0.0) {}
 
-Vector::Vector(float x, float y, float z) : x(x), y(y), z(z)
-{
-}
+Vector::Vector(float x) : x(x), y(0.0), z(0.0) {}
+
+Vector::Vector(float x, float y) : x(x), y(y), z(0.0) {}
+
+Vector::Vector(float x, float y, float z) : x(x), y(y), z(z) {}
 
 Vector Vector::operator+(const Vector v)
 {

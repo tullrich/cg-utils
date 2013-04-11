@@ -1,7 +1,7 @@
 _SOURCES := $(wildcard src/*.cpp)
 _SOURCE_SANS_MAIN := $(filter-out src/main.cpp,$(_SOURCES))
 _OBJECTS := $(patsubst %.cpp,%.o,$(_SOURCES))
-_DEPS := $(wildcard src/*.h)
+_DEPS := $(wildcard src/*.h) $(wildcard src/*.hpp)
 _PCHS := $(patsubst %.h,%.h.gch,$(_DEPS))
 
 _TEST_SOURCES := $(wildcard test/*.cpp)
