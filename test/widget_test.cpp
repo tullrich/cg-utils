@@ -44,7 +44,7 @@ class MockCallbackReceiver {
 TEST_F(WidgetTest, objectcallback) 
 { 
 	MockCallbackReceiver receiver;                            
-	EXPECT_CALL(receiver, PenUp())             
+	EXPECT_CALL(receiver, PenDown())             
 	.Times(AtLeast(1));
 
 	CallBack &test = *(new CallBackImpl<MockCallbackReceiver, &MockCallbackReceiver::PenDown>(receiver));

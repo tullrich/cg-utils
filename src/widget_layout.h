@@ -12,6 +12,9 @@
 #include <FL/Fl_Round_Button.H>
 #include <FL/Fl_Button.H>
 
+#include <string>
+using typename std::string;
+
 #include "cgutils.hpp"
 
 namespace cgutils
@@ -23,6 +26,7 @@ class IWidgetLayout
 public:
 	virtual void init() = 0;
 	virtual void start() = 0;
+	virtual void addScalar(const string &name, int * const variable, const int min, const int max) = 0;
 };
 
 
@@ -40,11 +44,14 @@ public:
 	virtual void addComponent(CallBack* cb);
 
 	virtual void addSlider(CallBack* cb);
+	virtual void addScalar(const string &name, int * const variable, const int min, const int max);
 
-	static void widgetCallback(Fl_Widget *w, void *data);
 
 protected:
 	Fl_Window *window;
+
+	static void widgetCallback(Fl_Widget *w, void *data);
+	static void scalarCallback(Fl_Widget *w, void *data);
 
 };
 

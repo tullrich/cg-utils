@@ -1,6 +1,9 @@
 #ifndef _CG_UTILS_HPP
 #define _CG_UTILS_HPP
 
+#include <string>
+using typename std::string;
+
 namespace cgutils
 {
 

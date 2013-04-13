@@ -34,4 +34,20 @@ void FLTKWidgetLayout::addSlider(CallBack* cb)
 	window->add(temp);
 }
 
+
+void FLTKWidgetLayout::scalarCallback(Fl_Widget *w, void *data)
+{
+	int* var = (int*)data;
+	*var = ((Fl_Valuator*)w)->value();
+}
+
+void FLTKWidgetLayout::addScalar(const string &name, int *const variable, const int min, const int max)
+{
+	Fl_Hor_Value_Slider &temp = *new Fl_Hor_Value_Slider(5, 30, 190, 25, name.c_str());
+	temp.bounds(min, max);
+	temp.user_data(variable);
+  	temp.callback(&FLTKWidgetLayout::scalarCallback);
+	window->add(temp);
+}
+
 } /* namespace cgutils*/

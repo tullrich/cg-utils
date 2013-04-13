@@ -14,7 +14,7 @@ BUILD_DIR := bin/
 PROGRAM_NAME := cgutils
 TEST_PROGRAM_NAME := $(PROGRAM_NAME)-test
 
-LDFLAGS :=$(shell fltk-config --use-gl --ldflags)
+LDFLAGS :=$(shell fltk-config --use-gl --ldflags) -lassimp
 TEST_LDFLAGS := $(LDFLAGS) -lpthread -lgtest_main -lgtest -lgmock
 
 all: cgutils cgutils-test

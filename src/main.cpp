@@ -4,10 +4,21 @@
 
 using namespace cgutils;
 
+class TestClass
+{
+public:
+	int blah;
+};
+
+
+TestClass tt;
+
 void testfunction()
 {
-	printf("this is a test\n");
+	printf("this is a test %i\n", tt.blah);
 }
+
+
 
 int main()
 {
@@ -16,7 +27,7 @@ int main()
 	fltk.init();
 
 	fltk.addSlider(new StaticCallBackImpl<&testfunction>());
-	fltk.addSlider(new StaticCallBackImpl<&testfunction>());
+	fltk.addScalar("test", &tt.blah, 0, 20);
 	fltk.start();
 
 }
