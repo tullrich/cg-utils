@@ -10,8 +10,23 @@
 namespace cgutils
 {
 
+
+typedef struct 
+{
+	string meshName;
+	
+	int numVertices;
+	int numFaces;
+	int numBones;
+	bool hasNormals;
+	bool hasTangentsAndBitangents;
+	bool hasVertexColors;
+
+} assimp_mesh_info;
+
 class AssimpAssetImporter 
 {
+
 public:
 	AssimpAssetImporter();
 
@@ -24,10 +39,40 @@ public:
 	 */
 	bool ImportFromFile(const std::string& path);
 
+	/**
+	 * Get the last error from the underlying Assimp importer
+	 * @return String containing the error message direct from Assimp
+	 */
+	const char* Error() const;
+
+	/**
+	 * Get the number of meshes found in the file.
+	 * An asset must be open.
+	 * @return total number of meshes
+	 */
+	int NumMeshes();
+
+	/**
+	 * Get the number of materials found in the file.
+	 * An asset must be open.
+	 * @return total number of materials
+	 */
+	int NumMaterials();
+
+	/**
+	 * Get the Mesh in the open file at the given index. 
+	 * @param  index index between 0 and NumMeshes()-1
+	 * @return       pointer to a Assimp_Mesh that references data owned by Assimp
+	 */
+	mesh_handle QueryMeshAtIndex(int index);
+
 protected:
 	Assimp::Importer importer;
 	const aiScene* scene;
+
+
 };
+
 
 } /* namespace cgutils*/
 #endif /* _IMPORT_H */
