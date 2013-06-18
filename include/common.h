@@ -99,6 +99,14 @@ inline float randf()
 	return (float)rand()/(float)RAND_MAX;
 }
 
+/**
+ * generate a uniformally random direction vector on a hemisphere around
+ * the input normal
+ * @param  normal normal vector around which the direction vector will be
+ * @return        random direction vector
+ */
+glm::vec3 uniformDirectionOnHemisphere(const glm::vec3 normal);
+
 std::string parentPath(const std::string path);
 std::string appendFilename(const std::string path, const std::string filename);
 
