@@ -11,6 +11,15 @@ namespace cgutils
 {
 
 
+class AssetFile
+{
+public:
+	AssetFile();
+	~AssetFile();
+
+	/* data */
+};
+
 typedef struct 
 {
 	string meshName;
@@ -22,7 +31,7 @@ typedef struct
 	bool hasTangentsAndBitangents;
 	bool hasVertexColors;
 
-} assimp_mesh_info;
+} MeshData;
 
 class AssimpAssetImporter 
 {
@@ -37,7 +46,7 @@ public:
 	 * @param  path Path to the file ond disk
 	 * @return      True if file was found and read correctly. 
 	 */
-	bool ImportFromFile(const std::string& path);
+	bool Open(const std::string& path);
 
 	/**
 	 * Get the last error from the underlying Assimp importer
@@ -64,7 +73,7 @@ public:
 	 * @param  index index between 0 and NumMeshes()-1
 	 * @return       pointer to a Assimp_Mesh that references data owned by Assimp
 	 */
-	mesh_handle QueryMeshAtIndex(int index);
+	int GetMeshAtIndex(int index);
 
 protected:
 	Assimp::Importer importer;

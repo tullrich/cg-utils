@@ -6,8 +6,7 @@ namespace cgutils
 {
 
 #define CHECK_ASSET_OPEN() \
-	if (scene == NULL) \
-		throw std::logic_error("No asset is open!");
+	CGUTILS_ASSERT(scene != NULL)
 
 
 AssimpAssetImporter::AssimpAssetImporter() : scene(NULL)
@@ -15,7 +14,7 @@ AssimpAssetImporter::AssimpAssetImporter() : scene(NULL)
 
 }
 
-bool AssimpAssetImporter::ImportFromFile(const std::string& path)
+bool AssimpAssetImporter::Open(const std::string& path)
 {
 
 	scene = importer.ReadFile( path, 
@@ -54,7 +53,7 @@ int AssimpAssetImporter::NumMaterials()
 	return scene->mNumMaterials;
 }
 
-AssimpAssetImporter::mesh_handle AssimpAssetImporter::GetMeshAtIndex(int index)
+int AssimpAssetImporter::GetMeshAtIndex(int index)
 {
 	CHECK_ASSET_OPEN()
 	

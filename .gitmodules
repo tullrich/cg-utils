@@ -1,0 +1,3 @@
+[submodule "libcgutils"]
+	path = external/cgutils
+	url = ../cg-utils.git

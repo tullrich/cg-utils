@@ -4,8 +4,26 @@
 #include <string>
 using typename std::string;
 
+#include <iostream>
+
 namespace cgutils
 {
+
+#ifndef NDEBUG
+  #include <cassert>
+  #define CGUTILS_ASSERT(condition) \
+  { \
+      if(!(condition)) \
+      { \
+          std::cerr << "Assertion failed at " << __FILE__ << ":" << __LINE__; \
+          std::cerr << " inside " << __FUNCTION__ << std::endl; \
+          std::cerr << "Condition: " << " "; \
+          abort(); \
+      } \
+  } 
+#else
+  #define CGUTILS_ASSERT(condition) (condition)
+#endif
 
 struct CallBack
 {
