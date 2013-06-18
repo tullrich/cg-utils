@@ -1,2 +1,0 @@
-/usr/bin/ar cr bin/libcgutils.a  CMakeFiles/cgutils.dir/src/mesh.cpp.o CMakeFiles/cgutils.dir/src/aabb.cpp.o CMakeFiles/cgutils.dir/src/ray.cpp.o CMakeFiles/cgutils.dir/src/texture.cpp.o CMakeFiles/cgutils.dir/src/light.cpp.o CMakeFiles/cgutils.dir/src/common.cpp.o CMakeFiles/cgutils.dir/src/entity.cpp.o CMakeFiles/cgutils.dir/src/material.cpp.o CMakeFiles/cgutils.dir/src/camera.cpp.o CMakeFiles/cgutils.dir/src/resources.cpp.o CMakeFiles/cgutils.dir/src/rtimage.cpp.o
-/usr/bin/ranlib bin/libcgutils.a
