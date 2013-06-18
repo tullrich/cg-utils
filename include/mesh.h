@@ -33,7 +33,7 @@ public:
 	typedef std::shared_ptr<mesh_data> mesh_ptr;
 	//typedef std::shared_ptr<const mesh_data> mesh_ptr;
 
-	mesh_data() : numVertices(0), verts(NULL), numFaces(0), faces(NULL), mat(NULL) {};
+	mesh_data() : numVertices(0), verts(NULL), numFaces(0), faces(NULL), mat(NULL), uvs(NULL){};
 	~mesh_data();
 
 
@@ -41,6 +41,7 @@ public:
 	void setVertices(int count, const glm::vec3 *ptr);
 	void setFaces(int count, const prim_tri *ptr);
 	void setMaterial(const Material *mat) { this->mat = mat; };
+	void setUVs(const TexCoord *ptr);
 
 	/**
 	 * Updates the given aabb so that it fully contains this mesh 
@@ -49,6 +50,7 @@ public:
 	void AABBContainMesh(AABB &aabb) const;
 
 
+	int getUVCount() const;
 
 	std::string name;
 	
@@ -60,7 +62,13 @@ public:
 	int numFaces;
 	const prim_tri *faces;
 
-	const Material *mat;
+	const Material *mat;	
+
+	/**
+	 * Array of UV coordinates for each vertex. The size of this array is
+	 * numVertices
+	 */
+	const TexCoord *uvs;
 
 private:
 	/**
@@ -69,19 +77,6 @@ private:
 	friend std::ostream& operator<<(std::ostream& o, const mesh_data& b);
 };
 
-class textured_mesh_data : public mesh_data
-{
-public:
-	textured_mesh_data() :  uvs(NULL) {};
-
-	void setUVs(const TexCoord *ptr);
-
-	/**
-	 * Array of UV coordinates for each vertex. The size of this array is
-	 * numVertices
-	 */
-	const TexCoord *uvs;
-};
 
 /**
  * Insert stream operator for mesh_data

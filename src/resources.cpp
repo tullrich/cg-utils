@@ -350,23 +350,16 @@ mesh_data::mesh_ptr AssimpAssetReader::buildMesh(const aiNode &node, int mMeshes
 	mat = getMaterial(ai_mesh->mMaterialIndex);
 
 	// create the mesh
-	mesh_data::mesh_ptr pMesh;
+	mesh_data::mesh_ptr pMesh = mesh_data::mesh_ptr(new mesh_data());
 	if(ai_mesh->GetNumUVChannels() > 0 && ai_mesh->mNumUVComponents[0] == 2) 
 	{
 		std::cout << "got a mesh with uvs" << std::endl; 
 		// we only support 2 component texture lookups on texture 0
-		textured_mesh_data *texture_mesh = new textured_mesh_data();
 		// copy the verts to memory managed by us
 		uvs = uvBufferForAiVector3D(ai_mesh->mNumVertices, ai_mesh->mTextureCoords[0]);
-		texture_mesh->setUVs(uvs);
-		pMesh = mesh_data::mesh_ptr(texture_mesh);
+		pMesh->setUVs(uvs);
 	}
-	else
-	{	
-		std::cout << "got a mesh without uvs" << std::endl; 
-		// allocate and set name
-		pMesh = mesh_data::mesh_ptr(new mesh_data());
-	}
+	
 	pMesh->setName("" + mesh_index); // TODO: FIXME
 	pMesh->setVertices(ai_mesh->mNumVertices, verts);
 	pMesh->setFaces(ai_mesh->mNumFaces, faces);

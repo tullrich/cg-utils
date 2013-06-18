@@ -37,11 +37,15 @@ void mesh_data::setFaces(int count, const prim_tri *ptr)
 
 
 
-void textured_mesh_data::setUVs(const glm::vec2 *ptr)
+void mesh_data::setUVs(const glm::vec2 *ptr)
 {
 	uvs = ptr;
 }
 
+int mesh_data::getUVCount() const
+{
+	return (uvs) ? 0 : 1; // temp
+}
 
 std::ostream& operator<<(std::ostream& o, const mesh_data& b)
 {
