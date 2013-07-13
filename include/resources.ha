@@ -25,9 +25,9 @@ using std::unique_ptr;
 class SceneGraph; //forward declaration
 class Material; //forward declaration
 
-
 class AssetReader
 {
+
 public:
 	virtual bool open(const std::string& path) = 0;
 
@@ -48,6 +48,9 @@ public:
 	 * @return String containing the error message direct from Assimp
 	 */
 	virtual const char* error() const = 0;
+
+
+	virtual void loadMeshByName(const std::string name) = 0;
 
 
 	/**
@@ -88,13 +91,16 @@ public:
 	 * concrete implementation of AssetReader::accept
 	 * @param visitor the visiting interface
 	 */
-	void accept(const EntityVisitor &visitor);
+	virtual void accept(const EntityVisitor &visitor);
 
 	/**
 	 * concrete implementation of AssetReader::accept
 	 * @param visitor the visiting interface
 	 */
-	void accept(const LightVisitor &visitor);
+	virtual void accept(const LightVisitor &visitor);
+
+
+	virtual void loadMeshByName(const std::string name);
 
 	/**
 	 * returns a camera from this file
@@ -166,7 +172,6 @@ protected:
 	std::string parent_path;
 
 };
-
 
 
 } /* namespace raytracer */

@@ -7,12 +7,12 @@ using typename std::string;
 
 #include <iostream>
 #include <map>
+#include <cassert>
 
 namespace cgutils
 {
 
 #ifndef NDEBUG
-  #include <cassert>
   #define CGUTILS_ASSERT(condition) \
   { \
       if(!(condition)) \
@@ -66,7 +66,8 @@ template<typename T>
 class Visitor
 {
 public:
-	virtual void visit(T &object) const  = 0;
+	virtual void visit(T &object) {};
+	virtual void visit(const T &object)  {};
 };
 
 /**
@@ -183,9 +184,22 @@ public:
 		return resources.size();
 	}
 
+	virtual T* getDefaultObject() { return NULL; }
+
 private:
 	entity_map resources;
 
+};
+
+
+template<typename T>
+class IteratorContainer : public std::pair<typename T::iterator, typename T::iterator>
+{
+public:
+	typedef typename T::iterator iterator;
+	IteratorContainer(typename T::iterator head, typename T::iterator tail) : std::pair<typename T::iterator, typename T::iterator>(head, tail) { };
+	typename T::iterator begin() { return this->first; }
+	typename T::iterator end() { return this->second; }
 };
 
 } /* namespace cgutils */

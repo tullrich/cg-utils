@@ -2,45 +2,144 @@
 #define _IMPORTER_H_
 
 #include "entity.h"
-#include "resources.h"
+#include "material.h"
 
 namespace raytracer {
 
 
-Entity::Entity() : position(0), scale(0), name("") {}
-
-void Entity::addMeshComponent(mesh_data::mesh_ptr mesh)
-{
-	if (mesh)
+	Entity::Entity(Mesh *m) : mPosition(0), scale(0), name(""), mDebugRenderable(NULL), mDebug(false)
 	{
-		meshes.push_back(mesh);
-		mesh->AABBContainMesh(aabb);
+		mMesh = m;
 
-		//std::cout << "adding mesh updating aabb " << aabb << std::endl;
-	}
-	else
-	{
-		std::cout << "Warning: adding null mesh component" << std::endl;
-	}
-}
-
-std::ostream& operator<<(std::ostream& o, const Entity& b)
-{
-	o << "Entity '" << b.name << "' {\n" \
-		<< "\tposition: " << b.position << "\n" \
-		<< "\tscale: " << b.scale << "\n" \
-		<< "\taabb: " << b.aabb << "\n" \
-		<< "\tmeshes: \n";
-
-		for (mesh_data::mesh_ptr m : b.meshes)
+		Mesh::SubMeshIterator iter = m->getSubMeshIterator();
+		for(Mesh::SubMeshIterator::iterator i = iter.begin(); i != iter.end(); i++)
 		{
-			o << "\t\t" << *m;
+			SubEntity *se = new SubEntity(this, *i);
+			mSubEntities.push_back(se);
+
+			Material *m = (*i)->getMaterial();
+			if(m)
+				se->setMaterial(m);
+		}
+	}
+
+	Entity::~Entity()
+	{
+		if(mDebugRenderable)
+		{
+			delete mDebugRenderable;
+			mDebugRenderable = NULL;
+		}
+	}
+
+
+	void Entity::visitRenderables(RenderableVisitor &r) const
+	{
+		SubEntityList::const_iterator i = mSubEntities.begin();
+		for(; i != mSubEntities.end(); ++i)
+		{
+			r.visit(*static_cast<const Renderable*>(*i));
 		}
 
-		o << "\n}";
+		if(mDebug)
+		{
+			r.visit(*static_cast<const Renderable*>(mDebugRenderable));
+		}
+	}
 
-	return o;
-}
+	void Entity::setPosition(const Vector3 &pos)
+	{
+		mPosition = pos;
+	}
+
+	const AABB& Entity::getWorldBounds()
+	{	
+		mWorldBounds = mMesh->getLocalBounds();
+		AABBTransform(mWorldBounds, getParentNodeFullTransform());
+		return mWorldBounds;
+	}
+
+	void Entity::setDebug(bool debug)
+	{
+		if(debug)
+		{
+			if(!mDebugRenderable)
+			{
+				mDebugRenderable = new WireFrameRenderable(getWorldBounds());
+			}
+			else
+			{
+				mDebugRenderable->update(getWorldBounds());
+			}
+		}
+
+		mDebug = debug;
+	}
+
+	void Entity::notifyNodeTransformChanged()
+	{
+		if(mDebug)
+		{
+			mDebugRenderable->update(getWorldBounds());
+		}
+	}
+
+	SubEntity::SubEntity(Entity *parent, SubMesh *sm) : mParentEntity(parent), mSubMesh(sm)
+	{
+		mMaterial = MaterialManager::getInstance().getDefaultObject();
+	}
+
+	void SubEntity::getRenderOperation(RenderOperation &p) const
+	{
+		HardwareSubMesh *hwsm = reinterpret_cast<HardwareSubMesh*>(mSubMesh);
+		p.mVertexData = hwsm->getVertexData();
+		p.mIndexData = hwsm->getIndexData();
+		if(hwsm->getUVData() != NULL)
+		{
+			p.mUVData = hwsm->getUVData();
+		}
+		if(hwsm->getNormalData() != NULL)
+		{
+			p.mNormalData = hwsm->getNormalData();
+		}
+		
+		p.mType = RenderOperation::PT_TRIANGLE_LIST;
+	}
+
+	void SubEntity::getWorldTransform(Matrix4 &m) const
+	{
+		m = mParentEntity->getParentNodeFullTransform();
+	}
+
+	void SubEntity::setMaterial(Material *m)
+	{
+		mMaterial = m;
+
+		if(!mMaterial)
+		{
+			mMaterial = MaterialManager::getInstance().getDefaultObject();
+		}
+
+		mMaterial->ensureLoaded();
+	}
+
+	const Material* SubEntity::getMaterial() const
+	{
+		return mMaterial;
+	}
+
+	std::ostream& operator<<(std::ostream& o, const Entity& b)
+	{
+		o << "Entity '" << b.name << "' {\n" \
+			<< "\tposition: " << b.mPosition << "\n" \
+			<< "\tscale: " << b.scale << "\n" \
+			<< "\taabb: " << b.aabb << "\n" \
+			<< "\tmeshes: \n";
+
+			o << "\n}";
+
+		return o;
+	}
 
 } /* namespace raytracer */
 

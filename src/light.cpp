@@ -3,84 +3,96 @@
 namespace raytracer {
 
 
-Light::Light(const std::string &name) : name(name), ambient(0), diffuse(0), specular(0), position(0), direction(0)
-{}
+	Light::Light(const std::string &name) : name(name), mAmbient(0), mDiffuse(0)
+		, mSpecular(0), position(0), direction(0)
+	{
 
-void Light::genShadowRay(const glm::vec3 point, Ray &r) const
-{
-	r = Ray(point, position);
-}
+	}
 
-void Light::setColor(const RGB &ambient, const RGB &diffuse, const RGB &specular)
-{
-	this->ambient = ambient;
-	this->diffuse = diffuse;
-	this->specular = specular;
-}
+	void Light::genShadowRay(const glm::vec3 point, Ray &r) const
+	{
+		r = Ray(point, position);
+	}
 
-void Light::setLocation(const glm::vec3 &position, const glm::vec3 &direction)
-{
-	this->position = position;
-	this->direction = direction;
-}
+	void Light::setColor(const RGB &ambient, const RGB &diffuse, const RGB &specular)
+	{
+		mAmbient = ambient;
+		mDiffuse = diffuse;
+		mSpecular = specular;
+	}
 
-void Light::setAttenuation(float constant, float linear, float quadratic)
-{
-	this->attenuationConstant = constant;
-	this->attenuationLinear = linear;
-	this->attenuationQuadratic = quadratic;
-}
+	void Light::setLocation(const glm::vec3 &position, const glm::vec3 &direction)
+	{
+		this->position = position;
+		this->direction = direction;
+	}
 
-void PointLight::getAttenuatedRadiance(const Ray &r, RGB &out) const
-{
-	float cofactor = attenuationConstant + attenuationLinear * r.d + attenuationQuadratic * pow(r.d, 2);
-	cofactor = clamp(1.0f / cofactor, 0.0, 1.0);
+	void Light::setAttenuation(float constant, float linear, float quadratic)
+	{
+		this->attenuationConstant = constant;
+		this->attenuationLinear = linear;
+		this->attenuationQuadratic = quadratic;
+	}
 
-	//std::cout << "d " << d << " cofactor " << cofactor << " result " << diffuse * cofactor << std::endl;
+	void Light::visitRenderables(RenderableVisitor &r) const
+	{
+		// no renderables for lights
+	}
 
-	out = diffuse * cofactor;
-}
+	const AABB& Light::getWorldBounds()
+	{
+		return mWorldBounds;
+	}
 
-AreaLight::AreaLight(const std::string &name, const glm::vec3 &side_h, const glm::vec3 &side_w) : Light(name)
-{
-	this->side_h = side_h;
-	this->side_w = side_w;
-	this->normal = glm::normalize(glm::cross(side_h, side_w));
-	this->area = glm::length(glm::cross(side_w, side_h));
-}
+	void PointLight::getAttenuatedRadiance(const Ray &r, RGB &out) const
+	{
+		float cofactor = attenuationConstant + attenuationLinear * r.d + attenuationQuadratic * pow(r.d, 2);
+		cofactor = clamp(1.0f / cofactor, 0.0, 1.0);
 
-void AreaLight::genShadowRay(const glm::vec3 point, Ray &r) const
-{
-	float variance_h = randf();
-	float variance_w = randf();
+		//std::cout << "d " << d << " cofactor " << cofactor << " result " << diffuse * cofactor << std::endl;
 
-	glm::vec3 sample_point = position + (variance_h * side_h) + (variance_w * side_w);
+		out = mDiffuse * cofactor;
+	}
 
-	r = Ray(point, sample_point);
-}
+	AreaLight::AreaLight(const std::string &name, const glm::vec3 &side_h, const glm::vec3 &side_w) : Light(name)
+	{
+		this->side_h = side_h;
+		this->side_w = side_w;
+		this->normal = glm::normalize(glm::cross(side_h, side_w));
+		this->area = glm::length(glm::cross(side_w, side_h));
+	}
 
-void AreaLight::getAttenuatedRadiance(const Ray &r, RGB &out) const
-{
-	glm::vec3 light_exitant = glm::normalize(r.p - r.q);
+	void AreaLight::genShadowRay(const glm::vec3 point, Ray &r) const
+	{
+		float variance_h = randf();
+		float variance_w = randf();
 
-	float cofactor = attenuationConstant + attenuationLinear * r.d + attenuationQuadratic * pow(r.d, 2);
-	cofactor = clamp(1.0f / cofactor, 0.0, 1.0);
+		glm::vec3 sample_point = position + (variance_h * side_h) + (variance_w * side_w);
 
-	out = diffuse * cofactor * fmaxf(glm::dot(normal, light_exitant), 0) * area;
-}
+		r = Ray(point, sample_point);
+	}
 
+	void AreaLight::getAttenuatedRadiance(const Ray &r, RGB &out) const
+	{
+		glm::vec3 light_exitant = glm::normalize(r.p - r.q);
 
-std::ostream& operator<<(std::ostream& o, const Light& b)
-{
-	return o << "Light '" << b.name << "' {\n" \
-	<< "\tposition: " << b.position << "\n" \
-	<< "\tattenuationConstant:" << b.attenuationConstant << "\n" \
-	<< "\tattenuationLinear:" << b.attenuationLinear << "\n" \
-	<< "\tattenuationQuadratic:" << b.attenuationQuadratic << "\n" \
-	<< "\tdiffuse:" << b.diffuse << "\n" \
-	<< "\tambient:" << b.ambient << "\n" \
-	<< "\tspecular:" << b.specular << "\n" \
-	<< "}";
-}
+		float cofactor = attenuationConstant + attenuationLinear * r.d + attenuationQuadratic * pow(r.d, 2);
+		cofactor = clamp(1.0f / cofactor, 0.0, 1.0);
+
+		out = mDiffuse * cofactor * fmaxf(glm::dot(normal, light_exitant), 0) * area;
+	}
+
+	std::ostream& operator<<(std::ostream& o, const Light& b)
+	{
+		return o << "Light '" << b.name << "' {\n" \
+		<< "\tposition: " << b.position << "\n" \
+		<< "\tattenuationConstant:" << b.attenuationConstant << "\n" \
+		<< "\tattenuationLinear:" << b.attenuationLinear << "\n" \
+		<< "\tattenuationQuadratic:" << b.attenuationQuadratic << "\n" \
+		<< "\tdiffuse:" << b.mDiffuse << "\n" \
+		<< "\tambient:" << b.mAmbient << "\n" \
+		<< "\tspecular:" << b.mSpecular << "\n" \
+		<< "}";
+	}
 
 } /* namespace raytracer */

@@ -173,70 +173,6 @@ void AssimpAssetReader::accept(const LightVisitor &visitor)
 	}
 }
 
-glm::vec3* vertBufferForAiVector3D(int mNumVertices, aiVector3D *verts, aiMatrix4x4 &worldSpace)
-{
-	glm::vec3 *buf = new glm::vec3[mNumVertices];
-	glm::mat4 modelToWorld(0.0f);
-	modelToWorld[0][0] = worldSpace.a1;
-	modelToWorld[0][1] = worldSpace.b1;
-	modelToWorld[0][2] = worldSpace.c1;
-	modelToWorld[0][3] = worldSpace.d1;
-	modelToWorld[1][0] = worldSpace.a2;
-	modelToWorld[1][1] = worldSpace.b2;
-	modelToWorld[1][2] = worldSpace.c2;
-	modelToWorld[1][3] = worldSpace.d2;
-	modelToWorld[2][0] = worldSpace.a3;
-	modelToWorld[2][1] = worldSpace.b3;
-	modelToWorld[2][2] = worldSpace.c3;
-	modelToWorld[2][3] = worldSpace.d3;
-	modelToWorld[3][0] = worldSpace.a4;
-	modelToWorld[3][1] = worldSpace.b4;
-	modelToWorld[3][2] = worldSpace.c4;
-	modelToWorld[3][3] = worldSpace.d4;
-
-	//std::cout << "MESH MATRIX " << modelToWorld << std::endl;
-
-	for (int i = 0; i < mNumVertices; i++)
-	{
-		buf[i] = glm::vec3(modelToWorld * glm::vec4(verts[i].x, verts[i].y, verts[i].z, 1));
-		//std::cout << "vert (" << buf[i].x << "," << buf[i].y << "," << buf[i].z << ") was " << verts[i].x << " " <<  verts[i].y << " " <<  verts[i].z << std::endl;
-	}
-
-	return buf;
-}
-
-glm::vec2* uvBufferForAiVector3D(int mNumVertices, aiVector3D *verts)
-{
-	glm::vec2 *buf = new glm::vec2[mNumVertices];
-
-	for (int i = 0; i < mNumVertices; i++)
-	{
-		buf[i] = glm::vec2(verts[i].x, verts[i].y);
-	}
-
-	return buf;
-}
-
-prim_tri* faceBufferForAiFace(int mNumFaces, aiFace *faces)
-{
-	prim_tri *buf = new prim_tri[mNumFaces];
-
-	for (int i = 0; i < mNumFaces; i++)
-	{
-		aiFace *face = &faces[i];
-		if (face->mNumIndices == 3)
-		{
-			memcpy(&buf[i], face->mIndices, sizeof(prim_tri)); 
-			//std::cout << " face (" << buf[i].x << "," << buf[i].y << "," << buf[i].z << ")" << std::endl;
-		}
-		else
-		{
-			std::cout << "Warning: mesh includes non-tri faces!" << std::endl;
-		}
-	}
-
-	return buf;
-}
 
 void getAiMatColor(const aiMaterial &ai_mat, const char* pKey, unsigned int type, unsigned int idx, glm::vec3 &copy)
 {
@@ -438,6 +374,22 @@ void AssimpAssetReader::computeTransformForNode(aiNode *node, aiMatrix4x4 &child
 	if (node != scene->mRootNode)
 	{
 		computeTransformForNode(node->mParent, childToWorld);
+	}
+}
+
+void AssimpAssetReader::loadMeshByName(const std::string name)
+{
+	ASSERT_ASSET_OPEN()
+
+	aiNode *n = scene->mRootNode->FindNode(aiString(name));
+
+	if(n != NULL)
+	{
+		std::cout << "found " << name << std::endl; 
+	}
+	else
+	{
+		std::cout << "did not find " << name << std::endl; 
 	}
 }
 

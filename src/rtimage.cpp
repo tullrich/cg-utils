@@ -12,11 +12,35 @@ namespace raytracer {
 #define IMG_PNG_EXT "\\.png"
 	 //(\\.jpeg)
 
-Image::Image(int width, int height)
+bool Image::loadFromSource(const std::string &filePath)
 {
-	this->width  = width;
-	this->height = height;
-	pixels       = new RGB[width*height]();
+	image::initImageSystem();
+    image::rtimage *img = image::loadImage(filePath);
+
+    if(!img)
+    	return false;
+
+    height = FreeImage_GetHeight(img);
+    width = FreeImage_GetWidth(img);
+    std::cout << "loadFromSource " << height << " " << width << std::endl; 
+	pixels = new RGB[width*height]();
+    for(int u = 0; u < height; u++)
+	{
+		for(int v = 0; v < width; v++)
+		{
+			RGBQUAD value;
+			if(FreeImage_GetPixelColor(img, v, u, &value))
+			{
+				pixels[u*width + v].r = value.rgbRed / 255.0f;
+				pixels[u*width + v].g = value.rgbGreen / 255.0f;
+				pixels[u*width + v].b = value.rgbBlue / 255.0f;
+
+			}
+		}
+	}
+
+	image::freeImage(img);
+	return true;
 }
 
 Image::~Image()
@@ -26,8 +50,8 @@ Image::~Image()
 
 RGB* Image::getRGBForPixel(int u, int v)
 {
-	if(u < width && u >= 0 && v < height && v >= 0 )
-		return &(pixels[v*height + u]);
+	if(u < height && u >= 0 && v < width && v >= 0 )
+		return &(pixels[u*width + v]);
 
 	return NULL;
 }
@@ -55,16 +79,16 @@ bool Image::writeOut(const std::string &filename) const
 
     image::rtimage *img = image::allocateImage(width, height);
 
-	for(int v = 0; v < height; v++)
+	for(int u = 0; u < height; u++)
 	{
-		for(int u = 0; u < width; u++)
+		for(int v = 0; v < width; v++)
 		{
 			RGBQUAD value;
-			value.rgbRed = 255 * pixels[v*height + u].r;
-			value.rgbGreen = 255 * pixels[v*height + u].g;
-			value.rgbBlue = 255 * pixels[v*height + u].b;
+			value.rgbRed = 255 * pixels[u*width + v].r;
+			value.rgbGreen = 255 * pixels[u*width + v].g;
+			value.rgbBlue = 255 * pixels[u*width + v].b;
 			value.rgbReserved = 255; // always full alpha
-			if (!FreeImage_SetPixelColor(img, u, v, &value))
+			if (!FreeImage_SetPixelColor(img, v, u, &value))
 			{
 				std::cout << "Freeimage SetPixelColor() failed" << std::endl;
 			}
@@ -93,6 +117,11 @@ void initImageSystem()
 rtimage* allocateImage(int wx, int hx) 
 {
 	return FreeImage_Allocate(wx,hx,32);
+}
+
+void freeImage(rtimage *img)
+{
+	FreeImage_Unload(img);
 }
 
 bool saveImage(rtimage *img, const char *filename)
@@ -125,7 +154,7 @@ rtimage* loadImage(const std::string &filepath)
 	if(format != FIF_UNKNOWN)
 	{
 		rtimage* img = NULL;
-		if(img  = FreeImage_Load(format, filepath.c_str(), 0))
+		if((img  = FreeImage_Load(format, filepath.c_str(), 0)))
 		{
 			return img;
 		}

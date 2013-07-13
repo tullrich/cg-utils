@@ -38,11 +38,13 @@ public:
 
 	/**
 	 * Intersect ray with an {@AABB link}
-	 * @param  t triangle to test intersection
+	 * @param  aab AABB to test intersection
 	 * @param  result vec3 returning the intersecting point
 	 * @return   true if this {@link Ray} intersects t, false otherwise
 	 */
 	bool intersects(const AABB &aabb, glm::vec3 &result) const;
+
+	Matrix4 toMatrix4() const;
 };
 
 std::ostream& operator<<(std::ostream& o, const Ray& b);

@@ -4,9 +4,15 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include "buildsettings.h"
 #include <glm/glm.hpp>
 #include "glm/gtc/quaternion.hpp"
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/quaternion.hpp>
 #include "cgutils.hpp"
+
+using namespace cgutils;
 
 namespace raytracer {
 
@@ -26,7 +32,16 @@ namespace raytracer {
 #define FLOAT_ERROR 0.0001f
 
 typedef glm::vec3 RGB;
+typedef glm::vec4 RGBA;
+typedef glm::vec3 Vertex;
+typedef glm::vec3 Vector3;
+typedef glm::vec4 Vector4;
+typedef glm::mat3 Matrix3;
+typedef glm::mat4 Matrix4;
 typedef glm::vec2 TexCoord;
+typedef glm::quat Quaternion;
+
+#include "Matrix.h"
 
 class Triangle 
 {
@@ -71,6 +86,23 @@ public:
 	TexCoord interpolateUV(const glm::vec4 &intersection) const;
 };
 
+/**
+ * Index values of a triangle
+ */
+class Face
+{
+public:
+	union 
+	{
+		unsigned int indices[3];
+		struct {
+			unsigned int x;
+			unsigned int y;
+			unsigned int z;
+		};
+	};
+};
+
 
 /**
  * A plane representing all points X s.t. dot(X, n) = d
@@ -110,8 +142,19 @@ glm::vec3 uniformDirectionOnHemisphere(const glm::vec3 normal);
 std::string parentPath(const std::string path);
 std::string appendFilename(const std::string path, const std::string filename);
 
+Quaternion rotationBetweenVectors(const Vector3 &start, const Vector3 &end);
+Matrix4 toTranslationMatrix(const Vector3 &translation);
+Matrix4 toTranslationMatrix(const Vector4 &translation);
+void translate(Matrix4 &mat, const Vector4 &translation);
+Matrix4 toScaleMatrix(const Vector3 &scale);
+Matrix4 toScaleMatrix(const Vector4 &scale);
+
+unsigned long getNow();
+
 std::ostream& operator<<(std::ostream& o, const glm::vec3& b);
+std::ostream& operator<<(std::ostream& o, const glm::vec4& b);
 std::ostream& operator<<(std::ostream& o, const glm::mat4& b);
+std::ostream& operator<<(std::ostream& o, const glm::quat& b);
 std::ostream& operator<<(std::ostream& o, const Triangle& b);
 
 } /* raytracer */

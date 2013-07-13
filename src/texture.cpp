@@ -3,49 +3,57 @@
 namespace raytracer {
 
 	
-Texture::Texture(const std::string filepath) : img(NULL)
-{
-	this->filepath = filepath;
-	this->img_width = 0;
-	this->img_height = 0;
-}
-
-bool Texture::isLoaded() const
-{
-	return img != NULL;
-}
-
-bool Texture::load()
-{
-	image::rtimage *img = NULL;
-	if(img = image::loadImage(filepath))
+	Texture::Texture(const std::string filepath) 
+		: mFilePath(filepath), mImage(NULL), mLoaded(false)
+		, mHeight(0), mWidth(0)
 	{
-		this->img_width = FreeImage_GetWidth(img);
-		this->img_height = FreeImage_GetHeight(img);
-
-		if(img_width > 0 && img_height > 0)
-		{
-			this->img = img;
-			return true;
-		}
 	}
 
-	std::cout << "Error: could not load Texture from file '" << filepath  << "'" << std::endl; 
-	return false;
-}
+	bool Texture::isLoaded() const
+	{
+		return mLoaded;
+	}
 
-glm::vec3 Texture::lookUp(const TexCoord &uv) const
-{
-	CGUTILS_ASSERT(img);
+	bool Texture::load()
+	{
+		if(mLoaded)
+			return true;
 
-	unsigned int pixel_x = uv.x * img_width;
-	unsigned int pixel_y = uv.y * img_height;
+		mImage = new Image();
 
-	RGBQUAD quad;
-	FreeImage_GetPixelColor(img, pixel_x, pixel_y, &quad);
-	glm::vec3 color(quad.rgbRed / 255.0f, quad.rgbGreen / 255.0f, quad.rgbBlue / 255.0f);
-	//std::cout << "texture lookup " << pixel_x << " " << pixel_y << " : " << color << std::endl; 
-	return color;
-}
+		if(mImage->loadFromSource(mFilePath))
+		{
+			mHeight = mImage->height;
+			mWidth = mImage->width;
+			mLoaded = true;
+		}
+		else
+		{
+			delete mImage;
+		}
+
+
+		if(!mLoaded)
+			std::cout << "Error: could not load Texture from file '" << mFilePath  << "'" << std::endl; 
+		
+		return mLoaded;
+	}
+
+	void Texture::unload()
+	{
+		mHeight = 0;
+		mWidth = 0;
+
+		if(mLoaded)
+			delete mImage;
+	}
+
+	glm::vec3 Texture::lookUp(const TexCoord &uv) const
+	{
+		CGUTILS_ASSERT(mImage);
+		unsigned int pixelX = uv.x * mWidth;
+		unsigned int pixelY = uv.y * mHeight;
+		return *mImage->getRGBForPixel(pixelX, pixelY);
+	}
 
 } /* namespace raytracer */

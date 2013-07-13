@@ -3,50 +3,81 @@
 
 #include "common.h"
 #include "ray.h"
+#include "Movable.h"
+#include "rendersystem/windowsubsystem.h"
 
 namespace raytracer {
 
-/**
- * Represents the eye during rendering
- */
-class Camera
-{
-public:
-	Camera(int x_res, int y_res);
-	Camera(const glm::vec3 &position, const glm::vec3 &lookAt, const glm::vec3 &up, float nearPlane, float farPlane, float FOV, float aspect);
-
-	glm::vec3 eye, lookAt, up, right;
-	float nearPlane, farPlane, FOV, FOVy, aspect, ;
-	glm::mat4 cameraToWorld;
-
-	float pixel_x, pixel_y;
-	float x_res, y_res;
+	class Window; // forward declaration
 
 	/**
-	 * Compute the worldspace vector cooresponding to the center of pixel i, j using
-	 * the orientation of this camera.	
-	 * @param i      horizontal pixel number
-	 * @param j      vertical pixel number
-	 * @param out    set to the resulting worldspace vector
+	 * Represents the eye during rendering
 	 */
-	void getPixelCenter(int i, int j, glm::vec3 &out, float variance_i, float variance_j)  const;
+	class Camera
+	{
+		friend std::ostream& operator<<(std::ostream& o, const Camera& b);
+	public:
+		Camera(int x_res, int y_res);
+		Camera(const Vector3 &position = Vector3()
+			, const Vector3 &up = Vector3(0.0f, 1.0f, 0.0f)
+			, float nearPlane = 0.1f, float farPlane = 100.0f
+			, float FOV = 45.0f, float aspect = 1.0f);
+
+		glm::mat4 cameraToWorld;
+
+		void lookAt(const Vector3 &point, const Vector3 &up = Vector3(0.0f, 1.0f, 0.0f));
+		void move(const Vector3 &point);
+		void rotate(const Quaternion &rotation);
+		void setPosition(const Vector3 &point);
+		void updateFrustum();
+		void updateView();
+		void setDirection(const Vector3 &direction, const Vector3 &up);
+		const Matrix4& getProjectionMatrix();
+		const Matrix4& getViewMatrix();
+		Vector3 getPosition() const { return Vector3(mPosition); };
+		void setOrientation(const Quaternion &orientation);
+		Quaternion getOrientation() const { return mOrientation; };
+
+		/**
+		 * Compute the worldspace vector cooresponding to the center of pixel i, j using
+		 * the orientation of this camera.	
+		 * @param i      horizontal pixel number
+		 * @param j      vertical pixel number
+		 */
+		Vector3 getWorldPixelCenter(int i, int j, float variance_i, float variance_j);
+
+		/**
+		 * generate a random viewing ray for the near plane project pixel (i, j)
+		 * @param i width pixel value
+		 * @param j height pixel value
+		 * @param r resultant {@link Ray}
+		 */
+		void genViewingRay(int i, int j, Ray &r);
+
+		Ray genPickRay(int i, int j);
+
+		float pixelXDimension() const;
+		float pixelYDimension() const;
+
+		void setWindow(const Window *window) { mWindow = window; }
+
+	protected:
+		Quaternion mOrientation;
+		Vector4 mPosition;
+
+		Matrix4 mProjectionMatrix, mViewMatrix;
+		bool mFrustumChanged, mLocationChanged;
+
+		float mNearPlane, mFarPlane;
+		float mFOV, mAspect;
+
+		const Window *mWindow;
+	};
 
 	/**
-	 * generate a random viewing ray for the near plane project pixel (i, j)
-	 * @param i width pixel value
-	 * @param j height pixel value
-	 * @param r resultant {@link Ray}
+	 * Insert stream operator for Camera
 	 */
-	void genViewingRay(int i, int j, Ray &r);
-
-	float pixelXDimension() const;
-	float pixelYDimension() const;
-};
-
-/**
- * Insert stream operator for Camera
- */
-std::ostream& operator<<(std::ostream& o, const Camera& b);
+	std::ostream& operator<<(std::ostream& o, const Camera& b);
 
 } /* raytracer */
 

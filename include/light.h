@@ -3,38 +3,59 @@
 
 #include "common.h"
 #include "ray.h"
+#include "Movable.h"
 
 namespace raytracer {
+
+
 
 /**
  * base class for Lights that are added to the scene
  */
-class Light
+class Light : public Movable
 {
 public:
+	enum Type
+	{
+		LIGHT_OMNI,
+		LIGHT_DIRECTIONAL,
+		LIGHT_SPOT,
+		LIGHT_AREA,
+	};
+
 	Light(const std::string &name);
 
 	typedef std::shared_ptr<Light> light_ptr;
 
-	void setLocation(const glm::vec3 &position, const glm::vec3 &direction);
+	void setLocation(const Vector3 &position, const Vector3 &direction);
 	void setColor(const RGB &ambient, const RGB &diffuse, const RGB &specular);
 	void setAttenuation(float constant, float linear, float quadratic);
 
 	const std::string name;
 
 	virtual void getAttenuatedRadiance(const Ray &r, RGB &out) const {};
-
 	virtual void genShadowRay(const glm::vec3 point, Ray &r) const;
+	virtual void visitRenderables(RenderableVisitor &r) const;
+	virtual const AABB& getWorldBounds();
+
+	const RGB& getAmbient() const { return mAmbient; }
+	const RGB& getDiffuse() const { return mDiffuse; }
+	const RGB& getSpecular() const { return mSpecular; }
+	void setAmbient(const RGB &ambient) { mAmbient = ambient; }
+	void setDiffuse(const RGB &diffuse) { mDiffuse = diffuse; }
+	void setSpecular(const RGB &specular) { mSpecular = specular; }
+protected:
 	/**
 	 * Location vars
 	 */
-	glm::vec3 position, direction;
+	Vector3 position, direction;
 
-protected:
 	/**
 	 * Lighting coefficents
 	 */
-	RGB ambient, diffuse, specular;
+	RGB mAmbient, mDiffuse, mSpecular;
+
+	AABB mWorldBounds;
 
 	/**
 	 * Attenuation vars

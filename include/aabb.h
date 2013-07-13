@@ -80,6 +80,8 @@ bool AABBintersectsPlane(const AABB &aabb, const Plane &p);
  */
 bool AABBintersectsTriangle(const AABB &aabb, const Triangle &t);
 
+void AABBTransform(AABB &aabb, const Matrix4 &mat);
+
 /**
  * Insert stream operator for AABB
  */

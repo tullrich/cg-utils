@@ -13,13 +13,15 @@ namespace raytracer {
 class Image
 {
 public:
-	Image(int width, int height);
-	~Image();
+	Image() {};
+	virtual ~Image();
 
+	bool loadFromSource(const std::string &filePath);
 	RGB* getRGBForPixel(int u, int v);
 	void setPixelColor(int u, int v, const RGB &color);
 	bool writeOut(const std::string &filename) const;
 
+	RGB* getImageBuffer() { return pixels; };
 
 	int width;
 	int height;
@@ -39,6 +41,7 @@ extern bool FreeImage_Initialised;
 
 void initImageSystem();
 rtimage* allocateImage(int wx, int hx);
+void freeImage(rtimage *img);
 bool saveImage(rtimage *img, const char *filename);
 
 /**
