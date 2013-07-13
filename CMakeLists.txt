@@ -12,6 +12,9 @@ set (CGUTILS_VERSION_MINOR 0)
 set (CGUTILS_SRCS_DIR src)
 set (CGUTILS_INCLUDE_DIR include)
 set (CGUTILS_CMAKE_DIR cmake)
+IF(NOT DEFINED CGUTILS_NESTED_BUILD)
+	set (LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
+ENDIF(NOT DEFINED CGUTILS_NESTED_BUILD)
 
 # -------------------------------------------------------------
 # FreeImage Dependency Tracking                         
@@ -160,4 +163,7 @@ CONFIGURE_FILE( ${CGUTILS_INCLUDE_DIR}/buildsettings.h.in ${CGUTILS_INCLUDE_DIR}
 # -------------------------------------------------------------
 add_library(cgutils STATIC ${CGUTILS_SRCFILES})
 TARGET_LINK_LIBRARIES(cgutils ${LIBS})
-set (CGUTILS_LIBRARY cgutils PARENT_SCOPE) # export the lib up
+
+IF(CGUTILS_NESTED_BUILD)
+	set (CGUTILS_LIBRARY cgutils PARENT_SCOPE) # export the lib up
+ENDIF(CGUTILS_NESTED_BUILD)
