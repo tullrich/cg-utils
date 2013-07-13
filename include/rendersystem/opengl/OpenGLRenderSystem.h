@@ -42,6 +42,7 @@ namespace raytracer {
 		TextureBindingUnitMap mLastTexUnitBindings;
 
 		OpenGLShaderProgram *mDefaultProgram;
+		bool mCEGUIInitialized;
 	};
 
 	typedef OpenGLRenderSystem CompiledRenderSystem;

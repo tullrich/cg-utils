@@ -14,12 +14,12 @@ namespace raytracer {
 	Window* RenderSystem::initialise(const string &windowTitle)
 	{
 		CGUTILS_ASSERT(mWindowSys && !mInitilized);
+		
 		mWindowSys->start();
 
 		mHWBufferManager = initaliseHWBufManager();
 		Window *win = mWindowSys->createWindow(this, windowTitle);
 		mWindows.push_back(win);
-
 		mInitilized = true;
 		return win;
 	}

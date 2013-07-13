@@ -14,7 +14,7 @@ namespace raytracer {
 	    	SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
 	    mSDLWinID = SDL_GetWindowID(mSDLWin);
 
-	    //SDL_GLContext glcontext = SDL_GL_CreateContext(mSDLWin);
+	    SDL_GLContext glcontext = SDL_GL_CreateContext(mSDLWin);
 
 	    if (mSDLWin == NULL){
 	        std::cout << SDL_GetError() << std::endl;

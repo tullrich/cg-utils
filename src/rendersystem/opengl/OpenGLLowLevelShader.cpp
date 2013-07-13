@@ -14,7 +14,6 @@ namespace raytracer {
 			case GPU_FRAGMENT_SHADER: shadertype = GL_FRAGMENT_SHADER; break;
 			case GPU_GEOMETRY_SHADER: shadertype = GL_GEOMETRY_SHADER; break;
 		}
-
 		mShaderID = glCreateShader(shadertype);
 
 		if(mShaderID == 0)

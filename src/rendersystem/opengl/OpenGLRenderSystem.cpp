@@ -11,7 +11,7 @@ namespace raytracer {
 		printf (" Message : %s\n", message );
 	}
 	
-	OpenGLRenderSystem::OpenGLRenderSystem(WindowSubSystem *sys) : RenderSystem(sys)
+	OpenGLRenderSystem::OpenGLRenderSystem(WindowSubSystem *sys) : RenderSystem(sys), mCEGUIInitialized(false)
 	{
 
 	}
@@ -85,7 +85,7 @@ namespace raytracer {
 			return NULL;
 		}
 
-		initCEGUI();
+		//initCEGUI();
 	    return win;
 	}
 
@@ -127,6 +127,8 @@ namespace raytracer {
 		PushButton* btnClose = static_cast<PushButton*>(wmgr.createWindow("TaharezLook/Button", "Button"));
 		btnClose->setText("Exit");
 		fWnd->addChild( btnClose );
+
+		mCEGUIInitialized = true;
 	}
 
 	HardwareBufferManager* OpenGLRenderSystem::initaliseHWBufManager()
@@ -269,6 +271,10 @@ namespace raytracer {
 
 	void OpenGLRenderSystem::renderGUI()
 	{
+
+		if(!mCEGUIInitialized)
+			return;
+
 		setTexture(1, false, NULL);
 		setTexture(2, false, NULL);
 		setTexture(3, false, NULL);
