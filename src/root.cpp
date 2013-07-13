@@ -11,12 +11,12 @@ namespace raytracer {
 		mWorkQueue->startup();*/
 	}
 
-	void Root::initialise(const string &windowTitle)
+	void Root::initialise(WindowSubSystem *sys, const string &windowTitle)
 	{
 		if (mHasInitialised)
 			return;
 
-		mRenderSystem = initialiseRenderSystem(windowTitle);
+		mRenderSystem = initialiseRenderSystem(sys, windowTitle);
 		mRenderSystem->setClearColor(RGBA(0.7f, 0.7f, 0.7f, 1.0f));
 		mRenderSystem->setFog(FogParameters(RGB(0.7f, 0.7f, 0.7f), 10.0f, 35.0f, 1.0f));
 		mSceneGraph = new SceneGraph();
@@ -26,10 +26,10 @@ namespace raytracer {
 		mHasInitialised = true;
 	}
 
-	RenderSystem* Root::initialiseRenderSystem(const string &windowTitle)
+	RenderSystem* Root::initialiseRenderSystem(WindowSubSystem *sys, const string &windowTitle)
 	{
 #ifdef RENDERSYSTEM_ENABLED
-		RenderSystem *rs = new CompiledRenderSystem();
+		RenderSystem *rs = new CompiledRenderSystem(sys);
 		mMasterWindow = rs->initialise(windowTitle);
 
 		if(mMasterWindow)

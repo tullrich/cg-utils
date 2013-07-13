@@ -19,7 +19,7 @@ namespace raytracer {
 	class OpenGLRenderSystem : public RenderSystem
 	{
 	public:
-		OpenGLRenderSystem();
+		OpenGLRenderSystem(WindowSubSystem *sys);
 		virtual ~OpenGLRenderSystem() {};
 		virtual void render(const RenderOperation &op);
 		virtual Window* initialise(const string &windowTitle);

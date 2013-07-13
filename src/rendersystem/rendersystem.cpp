@@ -1,25 +1,26 @@
 #include "rendersystem/rendersystem.h"
-
-#include "rendersystem/windowsubsystem.h"
+#include "rendersystem/WindowSubSystem.h"
 
 namespace raytracer {
 
 
-	RenderSystem::RenderSystem() : mMaterialDirty(true), mCurrentMaterial(NULL)
-		, mHWBufferManager(NULL), mWindowSys(NULL), mMaxLights(8)
-		, mFogDirty(true), mLightsDirty(true)
+	RenderSystem::RenderSystem(WindowSubSystem *sys)
+		: mWindowSys(sys), mMaterialDirty(true), mCurrentMaterial(NULL)
+		, mHWBufferManager(NULL), mMaxLights(8)
+		, mFogDirty(true), mLightsDirty(true), mInitilized(false)
 	{
-		mWindowSys = new WindowSubSystem();
 	}
 
-	//-----------------------------------------------------------------------
 	Window* RenderSystem::initialise(const string &windowTitle)
 	{
+		CGUTILS_ASSERT(mWindowSys && !mInitilized);
 		mWindowSys->start();
+
 		mHWBufferManager = initaliseHWBufManager();
 		Window *win = mWindowSys->createWindow(this, windowTitle);
 		mWindows.push_back(win);
 
+		mInitilized = true;
 		return win;
 	}
 

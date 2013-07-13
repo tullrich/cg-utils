@@ -11,7 +11,7 @@ namespace raytracer {
 		printf (" Message : %s\n", message );
 	}
 	
-	OpenGLRenderSystem::OpenGLRenderSystem()
+	OpenGLRenderSystem::OpenGLRenderSystem(WindowSubSystem *sys) : RenderSystem(sys)
 	{
 
 	}

@@ -24,7 +24,7 @@ namespace raytracer {
 
 	public:
 		virtual ~Root() {};
-		void initialise(const string &windowTitle = "");
+		void initialise(WindowSubSystem *sys, const string &windowTitle = "");
 		RenderSystem* getRenderSystem();
 
 		Mesh* getMesh(const string &fileName);
@@ -48,7 +48,7 @@ namespace raytracer {
 		Root();
 		bool renderFrame();
 		void pollEvent();
-		RenderSystem* initialiseRenderSystem(const string &windowTitle);
+		RenderSystem* initialiseRenderSystem(WindowSubSystem *sys, const string &windowTitle);
 
 		void fireFrameStart();
 		void fireFrameEnd();

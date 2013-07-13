@@ -4,7 +4,7 @@
 #include "common.h"
 #include "HardwareBuffer.h"
 #include "Renderable.h"
-#include "windowsubsystem.h"
+#include "WindowSubSystem.h"
 #include "light.h"
 #include "HardwareTexture.h"
 #include "material.h"
@@ -71,7 +71,7 @@ namespace raytracer {
 		typedef std::list<Light*> LightList;
 
 	public:
-		RenderSystem();
+		RenderSystem(WindowSubSystem *sys);
 		virtual ~RenderSystem() {};
 	
 		virtual Window* initialise(const string& windowTitle);
@@ -125,6 +125,7 @@ namespace raytracer {
 		RGBA mClearColor;
 
 		bool mProjectionViewDirty, mWorldDirty, mMaterialDirty, mLightsDirty, mFogDirty;
+		bool mInitilized;
 	};
 
 

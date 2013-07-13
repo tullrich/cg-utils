@@ -4,7 +4,7 @@
 #include "common.h"
 #include "ray.h"
 #include "Movable.h"
-#include "rendersystem/windowsubsystem.h"
+#include "Window.h"
 
 namespace raytracer {
 
