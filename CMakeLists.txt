@@ -151,6 +151,7 @@ include_directories("${CGUTILS_INCLUDE_DIR}")
 # -------------------------------------------------------------
 # Build Configuration                  
 # -------------------------------------------------------------
+option(BUILD_SAMPLES "Build all samples" ON)
 option(MESH_ALLOCATION_STRATEGY_HARDWARE "Allocate mesh resources in hardware buffers" ON)
 option(RENDERSYSTEM_ENABLED "Include rendersystem framework" ON)
 IF (OPENGL_FOUND)
@@ -167,3 +168,12 @@ TARGET_LINK_LIBRARIES(cgutils ${LIBS})
 IF(CGUTILS_NESTED_BUILD)
 	set (CGUTILS_LIBRARY cgutils PARENT_SCOPE) # export the lib up
 ENDIF(CGUTILS_NESTED_BUILD)
+
+# -------------------------------------------------------------
+# Build Examples                     
+# -------------------------------------------------------------
+IF(BUILD_SAMPLES)
+	set(CGUTILS_SAMPLE_OUTPUT_DIR ${PROJECT_BINARY_DIR}/bin)
+	set(CGUTILS_SAMPLE_LIBRARIES ${LIBS} cgutils)
+	add_subdirectory(examples)
+ENDIF(BUILD_SAMPLES)

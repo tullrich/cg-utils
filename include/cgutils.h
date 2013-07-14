@@ -11,6 +11,7 @@
 
 #include "texture.h"
 #include "RayRenderable.h"
-#include "gui/RocketSubSystem.h"
+
+#include "ApplicationBase.h"
 
 #endif /* _CG_UTILS_H_ */

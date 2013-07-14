@@ -41,7 +41,7 @@ namespace raytracer {
 		typedef std::map<GLint, GLenum> TextureBindingUnitMap;
 		TextureBindingUnitMap mLastTexUnitBindings;
 
-		OpenGLShaderProgram *mDefaultProgram;
+		OpenGLShaderProgram *mDefaultProgram, *mDefaultLineProgram;
 		bool mCEGUIInitialized;
 	};
 

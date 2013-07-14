@@ -64,13 +64,13 @@ namespace raytracer {
 	    //glGetIntegerv(GL_SAMPLES, &maxSamples);
 	    //std::cout << "GL_SAMPLES: " << maxSamples << std::endl;
 
-	    OpenGLLowLevelShader *vertexShader = new OpenGLLowLevelShader(OpenGLLowLevelShader::GPU_VERTEX_SHADER, "test_vs.vert");
+	    OpenGLLowLevelShader *vertexShader = new OpenGLLowLevelShader(OpenGLLowLevelShader::GPU_VERTEX_SHADER, "normalshaders/no_geo.vert");
 		OpenGLLowLevelShader *fragShader = new  OpenGLLowLevelShader(OpenGLLowLevelShader::GPU_FRAGMENT_SHADER, "test_fs.frag");
-		OpenGLLowLevelShader *geoShader = new  OpenGLLowLevelShader(OpenGLLowLevelShader::GPU_GEOMETRY_SHADER, "test_gs.geo");
+		//OpenGLLowLevelShader *geoShader = new  OpenGLLowLevelShader(OpenGLLowLevelShader::GPU_GEOMETRY_SHADER, "test_gs.geo");
 		mDefaultProgram = new OpenGLShaderProgram();
 		mDefaultProgram->attach(*vertexShader);
 		mDefaultProgram->attach(*fragShader);
-		mDefaultProgram->attach(*geoShader);
+		//mDefaultProgram->attach(*geoShader);
 		mDefaultProgram->link();
 
 		if(!mDefaultProgram->isBad())
@@ -84,6 +84,15 @@ namespace raytracer {
 			win = NULL;
 			return NULL;
 		}
+		
+	    OpenGLLowLevelShader *vertexLineShader = new OpenGLLowLevelShader(OpenGLLowLevelShader::GPU_VERTEX_SHADER, "line_passthrough.vert");
+		OpenGLLowLevelShader *geoLineShader = new  OpenGLLowLevelShader(OpenGLLowLevelShader::GPU_GEOMETRY_SHADER, "normalshaders/line_passthrough.geo");
+		OpenGLLowLevelShader *fragLineShader = new  OpenGLLowLevelShader(OpenGLLowLevelShader::GPU_FRAGMENT_SHADER, "normalshaders/diffuse_passthrough.frag");
+		mDefaultLineProgram = new OpenGLShaderProgram();
+		mDefaultLineProgram->attach(*vertexLineShader);
+		mDefaultLineProgram->attach(*geoLineShader);
+		mDefaultLineProgram->attach(*fragLineShader);
+		mDefaultLineProgram->link();
 
 		//initCEGUI();
 	    return win;
@@ -144,6 +153,21 @@ namespace raytracer {
 		OpenGLHardwareBuffer *uv_glhwb = static_cast<OpenGLHardwareBuffer*>(op.mUVData);
 		OpenGLHardwareBuffer *normal_glhwb = static_cast<OpenGLHardwareBuffer*>(op.mNormalData);
 		
+		GLenum nativePrimitiveType;
+		switch(op.mType)
+		{
+			case RenderOperation::PT_TRIANGLE_LIST:
+				nativePrimitiveType = GL_TRIANGLES;
+				//mDefaultProgram->activate();
+				break;
+			case RenderOperation::PT_LINE_LIST:
+				nativePrimitiveType = GL_LINES;
+				//mDefaultLineProgram->activate();
+				break;
+			default:
+				nativePrimitiveType = GL_POINTS;
+				break;
+		}
 
 		// vertices
 		glBindBuffer(GL_ARRAY_BUFFER, vertex_glhwb->getBufferID());
@@ -166,19 +190,7 @@ namespace raytracer {
 			glEnableVertexAttribArray(FixedAttribute::FA_NORMALS);
 		}
 
-		GLenum nativePrimitiveType;
-		switch(op.mType)
-		{
-			case RenderOperation::PT_TRIANGLE_LIST:
-				nativePrimitiveType = GL_TRIANGLES;
-				break;
-			case RenderOperation::PT_LINE_LIST:
-				nativePrimitiveType = GL_LINES;
-				break;
-			default:
-				nativePrimitiveType = GL_POINTS;
-				break;
-		}
+
 
 		if(index_glhwb)
 		{

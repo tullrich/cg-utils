@@ -256,7 +256,7 @@ namespace raytracer {
             glErr = glGetError();
             if(glErr != GL_NO_ERROR)
             {
-			    //reportGLSLError( glErr, "GLSLLinkProgram::Activate",
+            	std::cout << "glerror OpenGLShaderProgram::activate" << std::endl;
 			}
 		}
 	}
